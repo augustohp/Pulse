@@ -1,0 +1,85 @@
+<!doctype html>
+<!-- paulirish.com/2008/conditional-stylesheets-vs-css-hacks-answer-neither/ -->
+<!--[if lt IE 7 ]> <html class="no-js ie6" lang="en"> <![endif]-->
+<!--[if IE 7 ]>    <html class="no-js ie7" lang="en"> <![endif]-->
+<!--[if IE 8 ]>    <html class="no-js ie8" lang="en"> <![endif]-->
+<!--[if (gte IE 9)|!(IE)]><!--> <html class="no-js" lang="en"> <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <title>Pulse - Mapping Utility</title>
+  <meta name="description" content="Pulse Mapping Utility">
+  <meta name="author" content="Augusto Pascutti">
+  <link rel="stylesheet" href="style.css">
+
+</head>
+
+<body>
+
+  <div id="container">
+    <header>
+      <h1>Pulse Mapping Utility</h1>
+    </header>
+    <div id="main" role="main">
+      <fieldset>
+        <label>Options</label>
+        
+        <dl>
+          <dt>Width:</dt>
+          <dd><input type="text" id="map_width" value="34" /> (map units)</dd>
+          <dt>Height:</dt>
+          <dd><input type="text" id="map_height" value="20" /> (map units)</dd>
+          <dt>&nbsp;</dt>
+          <dd><input type="submit" id="map_create" value="Create" /></dd>
+        </dl>
+      </fieldset>
+      
+      <hr />
+      
+      <canvas id="map">
+        <p>This browser does not support this feature, please consider using one of the following</p>
+        <ul>
+          <li> Google Chrome 9+ </li>
+          <li> Mozilla Firefox 3.5+ </li>
+          <li> Internet Explorer 9+</li>
+          <li> Opera 9+</li>
+        </ul>
+      </canvas>
+    </div>
+    <footer>
+      Augusto Pascutti - 2011 - augusto [at] phpsp [dot] org [dot] br
+    </footer>
+  </div> <!--! end of #container -->
+
+  <!-- scripts concatenated and minified via ant build script-->
+  <script type="text/javascript" src="../library/require.js"></script>
+  <script type="text/javascript">
+    var paths  = { "library": "../library" };
+    require({"paths": paths, "urlArgs": "bust=" +  (new Date()).getTime()}, ["library/mapper"], function(Mapper) {
+      var map = new Mapper({
+        "widthElement": "map_width",
+        "heightElement": "map_height",
+        "triggerElement": "map_create",
+        "containerElement": "map"
+      });
+    });
+  </script>
+  <!-- end scripts-->
+
+
+  <!--[if lt IE 7 ]>
+    <script src="js/libs/dd_belatedpng.js"></script>
+    <script>DD_belatedPNG.fix('img, .png_bg'); // Fix any <img> or .png_bg bg-images. Also, please read goo.gl/mZiyb </script>
+  <![endif]-->
+
+
+  <!-- mathiasbynens.be/notes/async-analytics-snippet Change UA-XXXXX-X to be your site's ID
+  <script>
+    var _gaq=[['_setAccount','UA-XXXXX-X'],['_trackPageview']];
+    (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];g.async=1;
+    g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js';
+    s.parentNode.insertBefore(g,s)}(document,'script'));
+  </script>
+  -->
+</body>
+</html>

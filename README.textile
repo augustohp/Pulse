@@ -1,0 +1,3 @@
+A 3D implementaion above <canvas> element of a simple and stupid raycasting engine.
+  
+PS: it will be something like that, but first let me finish the mapping tool ...
