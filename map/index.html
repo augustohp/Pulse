@@ -26,17 +26,37 @@
         
         <dl>
           <dt>Width:</dt>
-          <dd><input type="text" id="map_width" value="34" /> (map units)</dd>
+          <dd><input type="text" id="map_width" value="32" /> (map units)</dd>
           <dt>Height:</dt>
           <dd><input type="text" id="map_height" value="20" /> (map units)</dd>
           <dt>&nbsp;</dt>
           <dd><input type="submit" id="map_create" value="Create" /></dd>
         </dl>
+        
+        <dl>
+          <dt> Tile type: </dt>
+          <dd id="tiles">
+            <select id="tile">
+              <option value="1">Floor</option>
+              <option value="2">Wall</option>
+            </select>
+          </dd>
+          
+          <dt>Map string:</dt>
+          <dd><textarea id="map_string"></textarea></dd>
+          
+          <dt>&nbsp;</dt>
+          <dd>
+            <input type="submit" id="map_get" value="Update Map String" />
+            <input type="submit" id="map_set" value="Set Map from String" />
+          </dd>
+          
+        </dl>
       </fieldset>
       
       <hr />
       
-      <canvas id="map">
+      <canvas id="map" width="500px" height="500px">
         <p>This browser does not support this feature, please consider using one of the following</p>
         <ul>
           <li> Google Chrome 9+ </li>
@@ -60,13 +80,45 @@
         "widthElement": "map_width",
         "heightElement": "map_height",
         "triggerElement": "map_create",
-        "containerElement": "map"
+        "containerElement": "map",
+        "tileElement": "tile"
+      });
+      
+      $('#map_get').click(function() {
+        $('#map_string').val(map.getMap());
+      });
+      
+      $('#map_set').click(function() {
+        map.setMap($('#map_string').val());
       });
     });
   </script>
   <!-- end scripts-->
 
-
+<!--
+  Sample map:
+  
+  22222222222222222222222222222222
+  21111211111121121121111111121112
+  21111211111121121121111111121112
+  22211211111121121121111111121112
+  22211211111111111111111111121112
+  22211211111111111111111111121112
+  21111211221111111111221122121112
+  21111211221111111111221122121112
+  21111111221111111111221122111112
+  21111111221111111111221122111112
+  21111111221111111111221122111112
+  21111211221111111111221122121112
+  21111211221111111111221122121112
+  21111211111111111111111111121112
+  21111211111111111111111111121112
+  21111211111111111111111111121222
+  21111211111121121121111111121222
+  21111211111121121121111111121112
+  21111211111121121121111111121112
+  22222222222222222222222222222222
+-->
   <!--[if lt IE 7 ]>
     <script src="js/libs/dd_belatedpng.js"></script>
     <script>DD_belatedPNG.fix('img, .png_bg'); // Fix any <img> or .png_bg bg-images. Also, please read goo.gl/mZiyb </script>

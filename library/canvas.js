@@ -38,7 +38,7 @@ define(["library/jquery"], function($) {
             x = u*self.scale;
             if ( prepend )
                 return x+prepend;
-            return parseInt(x,10);
+            return x;
         }
         /**
          * Returns the width in the correct scale.
@@ -57,11 +57,10 @@ define(["library/jquery"], function($) {
             self.container = $('#'+self.containerId).get(0);
             if ( ! self.containerId )
                 throw new Error("Container could not be initialized.");
-            $(self.container).width(self.getWidth()+"px");
-            $(self.container).height(self.getHeight()+"px");
             if ( ! self.container || ! self.container.getContext )
                 throw new Error("The container element is not a valid canvas element. (Does this browser really supports canvas?)");
             $$ = self.context = self.container.getContext('2d');
+            self.emptyContext();
         };
         /**
          * Sets fill color.
@@ -96,12 +95,21 @@ define(["library/jquery"], function($) {
             this.setStroke(self._stroke, self._strokeWidth);
         };
         /**
+         * Draws a blank canvas.
+         */
+        this.emptyContext = function() {
+            self.setFill('#FFF');
+            self.rect(0, 0, self.width, self.height);
+            self.reset();
+        }
+        /**
          * Draws a line.
          */
         this.line = function(fromX, fromY, toX, toY) {
             self.log("Drawing line from "+self.getUnit(fromX)+","+self.getUnit(fromY)+" to "+self.getUnit(toX)+","+self.getUnit(toY));
             $$.moveTo(self.getUnit(fromX), self.getUnit(fromY));
             $$.lineTo(self.getUnit(toX), self.getUnit(toY));
+            return self;
         };
         /**
          * Draws a rectangle
@@ -111,6 +119,7 @@ define(["library/jquery"], function($) {
             height = height || width;
             self.log('Drawing rectangle from'+self.getUnit(fromX)+","+self.getUnit(fromY)+" with "+self.getUnit(width)+","+self.getUnit(height));
             $$.strokeRect(self.getUnit(fromX), self.getUnit(fromY), self.getUnit(width), self.getUnit(height));
+            return self;
         };
         /**
          * Draws a filled rectangle.
@@ -120,6 +129,7 @@ define(["library/jquery"], function($) {
             height = height || width;
             self.log('Drawing a filled rectangle from'+self.getUnit(fromX)+","+self.getUnit(fromY)+" with "+self.getUnit(width)+","+self.getUnit(height));
             $$.fillRect(self.getUnit(fromX), self.getUnit(fromY), self.getUnit(width), self.getUnit(height));
+            return self;
         };
         /**
          * Returns the grid position on wich the current event was triggered
