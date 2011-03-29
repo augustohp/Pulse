@@ -1,12 +1,16 @@
 /**
  * canvas.js
  * Canvas helper module
+ *
+ * TODO rename 'fill' and 'stroke' properties to use this namespace as functions instead of endStroke() and endFill();
+ * @package Pulse
  * @author Augusto Pascutti
  */
 define(["library/jquery"], function($) {
     var Canvas = function(options) {
         var self         = this;
         var $$           = undefined; // Context alias
+        options          = options || {};
         this.containerId = options.containerId || undefined;
         this.container   = undefined;
         this.context     = null;
@@ -55,6 +59,11 @@ define(["library/jquery"], function($) {
             if ( ! self.containerId )
                 throw new Error("Container element not defined, please especify it in options.");
             self.container = $('#'+self.containerId).get(0);
+            w = self.getUnit(self.width);
+            h = self.getUnit(self.height);
+            $(self.container).width(w+'px').attr('width', w);
+            $(self.container).height(h+'px').attr('height', h);
+            
             if ( ! self.containerId )
                 throw new Error("Container could not be initialized.");
             if ( ! self.container || ! self.container.getContext )
@@ -101,14 +110,30 @@ define(["library/jquery"], function($) {
             self.setFill('#FFF');
             self.rect(0, 0, self.width, self.height);
             self.reset();
+        };
+        this.beginPath = function() {
+            $$.beginPath();
+        };
+        this.closePath = function() {
+            $$.closePath();
+        };
+        this.endStroke = function() {
+            $$.stroke();
+        }
+        this.endFill = function() {
+            $$.fill();
         }
         /**
          * Draws a line.
          */
-        this.line = function(fromX, fromY, toX, toY) {
+        this.line = function(fromX, fromY, toX, toY, color) {
+            if ( color )
+                self.setStroke(color);
             self.log("Drawing line from "+self.getUnit(fromX)+","+self.getUnit(fromY)+" to "+self.getUnit(toX)+","+self.getUnit(toY));
             $$.moveTo(self.getUnit(fromX), self.getUnit(fromY));
             $$.lineTo(self.getUnit(toX), self.getUnit(toY));
+            if ( color )
+                self.reset();
             return self;
         };
         /**
@@ -124,11 +149,15 @@ define(["library/jquery"], function($) {
         /**
          * Draws a filled rectangle.
          */
-        this.rectFill = function(fromX, fromY, width, height) {
+        this.rectFill = function(fromX, fromY, width, height, fill) {
+            if ( fill )
+                self.setFill(fill);
             width  = width || 1;
             height = height || width;
             self.log('Drawing a filled rectangle from'+self.getUnit(fromX)+","+self.getUnit(fromY)+" with "+self.getUnit(width)+","+self.getUnit(height));
             $$.fillRect(self.getUnit(fromX), self.getUnit(fromY), self.getUnit(width), self.getUnit(height));
+            if ( fill )
+                self.reset();
             return self;
         };
         /**
