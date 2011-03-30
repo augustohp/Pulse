@@ -6,7 +6,8 @@
  * @package Pulse
  * @author Augusto Pascutti <augusto@phpsp.org.br>
  */
-define(['library/mapper', 'library/frame', 'library/jquery', 'library/keyboard', 'library/player', 'library/log'], function(Map, Frame, $, Keyboard, Player, Logger) {
+define(['library/mapper', 'library/frame', 'library/jquery', 'library/keyboard', 'library/player', 'library/log', 'library/util'], 
+        function(Map, Frame, $, Keyboard, Player, Logger, undefined) {
     
     var Game = function(options) {
         var self              = this;
@@ -23,6 +24,7 @@ define(['library/mapper', 'library/frame', 'library/jquery', 'library/keyboard',
         self._debug           = options.debug || false;
         self._startPoint      = options.startPoint || [0,0];
         self.player           = undefined;
+        self._update          = false;
         /**
          * Inits the game engine.
          */
@@ -51,6 +53,7 @@ define(['library/mapper', 'library/frame', 'library/jquery', 'library/keyboard',
         self._initKeyboard = function() {
             Log.debug('Init keyboard events');
             self._keyboard = new Keyboard({"debug": self.debug});
+            self._keyboard.all(function() {self._update = true;});
         };
         /**
          * Initilizes framerate handling.
@@ -59,8 +62,11 @@ define(['library/mapper', 'library/frame', 'library/jquery', 'library/keyboard',
             Log.debug("Init framerate controller");
             self._framerate = new Frame();
             self._framerate.addCallback(function(delta) {
+                update       = self.update;
+                self._update = false;
+                //if ( ! update ) return;
                 $$.drawMap();
-                self.player.update().draw($$.getCanvas());
+                self.player.update($$, delta).draw($$.getCanvas());
             });
         };
         /**
@@ -73,7 +79,7 @@ define(['library/mapper', 'library/frame', 'library/jquery', 'library/keyboard',
             self.key(['DOWN','s'], function() { self.player.reverse(); },self._keyboard.KEYDOWN);
             self.key(['LEFT','a'], function() { self.player.left(); }, self._keyboard.KEYDOWN);
             self.key(['RIGHT','d'], function() { self.player.right(); }, self._keyboard.KEYDOWN);
-            self.key(['UP','w','DOWN','s'], function() { self.player.break(); },self._keyboard.KEYUP);
+            self.key(['UP','w','DOWN','s'], function() { self.player.stop(); },self._keyboard.KEYUP);
             self.key(['LEFT','a','RIGHT','d'], function() { self.player.still(); }, self._keyboard.KEYUP);
             self.player.draw($$.getCanvas());
         };

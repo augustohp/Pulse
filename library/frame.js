@@ -45,7 +45,7 @@ define(function() {
             self._lastFrame = new Date(self._lastFrame.getTime()+delta);
             if ( delta > self._timeout ) // Compensate rendering time loss ...
                 delta = Math.max(1, self._timeout - (delta-self._timeout));
-            self._frames++;
+            //self._frames++;
             self.runCallbacks(delta);
             setTimeout(self._update, 1000/self.fps);
         };

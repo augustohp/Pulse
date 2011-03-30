@@ -10,7 +10,7 @@ define(["library/log"], function(Logger) {
         self.speed         = options.speed || 0.3;
         self.speedRotation = options.speedRotation || 5;
         self.direction     = 0;
-
+        self.map           = options.map || undefined;
         
         self._init = function() {
             self.setSpeedRotation(self.speedRotation);
@@ -61,16 +61,26 @@ define(["library/log"], function(Logger) {
             self.moving = -1;
         };
         
-        self.break = function() {
-            Log.debug("Break (aceleration = 0)");
+        self.stop = function() {
+            Log.debug("Stop (aceleration = 0)");
             self.moving = 0;
         };
         
-        self.update = function() {
-            velocity = self.moving * self.speed;
+        self.canMoveTo = function(map, x,y) {
+            return true;
+            return map.canWalk(x,y);
+        }
+        
+        self.update = function(map, delta) {
+            delta    = 1; 
+            velocity = self.moving * self.speed * delta;
             self.a  += self.direction * self.speedRotation;
-            self.x = self.x + (Math.cos(self.a) * velocity);
-            self.y = self.y + (Math.sin(self.a) * velocity);
+            x        = self.x + (Math.cos(self.a) * velocity);
+            y        = self.y + (Math.sin(self.a) * velocity);
+            if ( ! self.canMoveTo(map, x,y) )
+                return self;
+            self.x = x;
+            self.y = y;
             return self;
         };
         

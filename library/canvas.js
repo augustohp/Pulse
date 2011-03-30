@@ -45,6 +45,19 @@ define(["library/jquery"], function($) {
             return x;
         }
         /**
+         * Defines the width;
+         */
+        this.setWidth = function(w) {
+            self.width = w;
+            w          = self.getUnit(w);
+            $(self.container).width(w+'px').attr('width', w);
+        };
+        this.setHeight = function(h) {
+            self.height = h;
+            h           = self.getUnit(self.height);
+            $(self.container).height(h+'px').attr('height', h);
+        };
+        /**
          * Returns the width in the correct scale.
          */
         this.getWidth = function() { return self.getUnit(self.width); }
@@ -59,10 +72,8 @@ define(["library/jquery"], function($) {
             if ( ! self.containerId )
                 throw new Error("Container element not defined, please especify it in options.");
             self.container = $('#'+self.containerId).get(0);
-            w = self.getUnit(self.width);
-            h = self.getUnit(self.height);
-            $(self.container).width(w+'px').attr('width', w);
-            $(self.container).height(h+'px').attr('height', h);
+            self.setWidth(self.width);
+            self.setHeight(self.height);
             
             if ( ! self.containerId )
                 throw new Error("Container could not be initialized.");
@@ -109,6 +120,7 @@ define(["library/jquery"], function($) {
         this.emptyContext = function() {
             self.setFill('#FFF');
             self.rect(0, 0, self.width, self.height);
+            self.endFill();
             self.reset();
         };
         this.beginPath = function() {

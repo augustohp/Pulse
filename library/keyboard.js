@@ -13,39 +13,31 @@ define(['library/jquery', 'library/log'], function($, Logger) {
      * Key binding class.
      */
     var Binding = function(keys, callback, ev) {
-        this.keys     = keys;
-        this.callback = callback;
-        this.events   = ev || [KEYDOWN, KEYUP];
+        var self      = this;
+        self.keys     = keys;
+        self.callback = callback;
+        self.events   = ev || [KEYDOWN, KEYUP];
         /**
          * Returns if the given key code refers to this binding.
+         *
+         * @return Boolean
          */
-        this.isKey = function(k) {
-            if ( this.keys instanceof Array ) {
-                for (_k=0; _k<this.keys.length; _k++)
-                    if (this.keys[_k]==k) return true;
-            } else if ( k == this.keys ) {
-                return true;
-            }
-            return false;
+        self.isKey = function(k) {
+            return ( this.keys[k] >= 0 );
         };
         /**
          * Returns if the current event is associated with this binding.
+         *
+         * @return Boolean
          */
-        this.isEvent = function(e) {
-            if ( this.events instanceof Array ) {
-                for (_k=0; _k<this.events.length; _k++)
-                    if (this.events[_k]==e) return true;
-            } else if ( e == this.events ) {
-                return true;
-            }
-            
-            return false;
+        self.isEvent = function(e) {
+            return ( this.events.indexOf(e) >= 0 );
         };
         /**
          * Executes the callback associated with this binding if the given key code
          * corresponds to this binding.
          */
-        this.callFor = function(e, k) {
+        self.callFor = function(e, k) {
             if ( this.isEvent(e) ) 
                 if ( this.isKey(k) )
                     this.run();
@@ -53,9 +45,22 @@ define(['library/jquery', 'library/log'], function($, Logger) {
         /**
          * Runs the callback.
          */
-        this.run = function() {
-            this.callback();
+        self.run = function() {
+            this.callback.call();
         }
+        /**
+         * Inits object.
+         */
+        self._init = function() {
+            if ( ! self.keys instanceof Array )
+                self.keys = [self.keys];
+            if ( ! self.events instanceof Array )
+                self.events = [self.events];
+            self.keys.forEach(function(k) {
+                self.keys[k] = k;
+            });
+        };
+        this._init();
     };
     
     /**
@@ -68,6 +73,7 @@ define(['library/jquery', 'library/log'], function($, Logger) {
         self.debug     = options.debug || false;
         self.mapping   = [];
         self._bindings = [];
+        self._all      = undefined;
         
         self.KEYDOWN     = KEYDOWN;
         self.KEYUP       = KEYUP;
@@ -88,13 +94,13 @@ define(['library/jquery', 'library/log'], function($, Logger) {
             Log.debug("Binding events ...");
             $(document).keydown(function(e) {
                 key = e.which;
-                //Log.debug("Pressed "+key);
+                self.runAll();
                 for(__b=0; __b<self._bindings.length; __b++)
                     self._bindings[__b].callFor(self.KEYDOWN,key);
             });
             $(document).keyup(function(e) {
                 key = e.which;
-                //Log.debug("Released "+key);
+                self.runAll();
                 for(__b=0; __b<self._bindings.length; __b++)
                     self._bindings[__b].callFor(self.KEYUP,key);
             });
@@ -132,8 +138,15 @@ define(['library/jquery', 'library/log'], function($, Logger) {
             b = new Binding(key, callback, ev);
             self._bindings.push(b);
         };
-        
+        self.runAll = function() {
+            if ( self._all )
+                self._all.call();
+        }
+        self.all = function(callback) {
+            self._all = callback;
+        };
         self._init();
     };
+    
     return Keyboard;
 });

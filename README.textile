@@ -1,3 +1,26 @@
 A 3D implementaion above <canvas> element of a simple and stupid raycasting engine.
   
-PS: it will be something like that, but first let me finish the mapping tool ...
+What the project current has:
+
+* Basic canvas API with scale support;
+* Basic mapping tool to create new maps and render saved ones;
+* Keyboard binding tool to provide easy key binding;
+* Framerate controller;
+* Basic player class controll;
+* Basic "Engine" to put it all together;
+
+The roadmap:
+
+* Short term
+** Tile collision detection
+** Casting rays to render a basic 3D view
+** Remove jquery from project
+** Performance refactor
+** Better log tool
+** Framerate should control game status (play, pause)
+* Long term
+** Canvas API focused on performance and as an object oriented way;
+** Separate Mapping render from mapping creation tool;
+** Complete tool to create maps (insert sprites, type of tiles, scripted events, etc);
+** Engine must support 3 perspectives: basic 3d, top view, side scroll;
+** Multiplayer suport (client/server)

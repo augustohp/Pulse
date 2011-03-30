@@ -1,55 +1,51 @@
-define(['library/jquery', 'library/canvas', 'library/log'],function($, Canvas, Logger) {
-    var Tile = function() {
-        this.id    = 0;
-        this.color = undefined;
-        this.name  = undefined;
-    }
-    
+define(['library/jquery', 'library/canvas', 'library/log', 'library/util', 'library/map/tile'],function($, Canvas, Logger, undefined, Tile) {    
     var Mapper = function(options) {
         var self              = this;
         var $$                = undefined;
         var Log               = new Logger({"TAG":"[Mapper]", "debug":options.debug});
         options               = options || {};
-        this.map              = options.map || [];
-        this.width            = parseInt(options.width, 10) || 0;
-        this.height           = parseInt(options.height, 10) || 0;
-        this.widthElement     = options.widthElement || undefined;
-        this.heightElement    = options.heightElement || undefined;
-        this.triggerElement   = options.triggerElement || undefined;
-        this.containerElement = options.containerElement || undefined;
-        this.tileElement      = options.tileElement || undefined;
-        this.creatorMode      = options.creator || false;
-        this.scale            = options.scale || 15;
+        self.map              = [];
+        self._mapString       = options.map || "";
+        self.width            = parseInt(options.width, 10) || 0;
+        self.height           = parseInt(options.height, 10) || 0;
+        self.widthElement     = options.widthElement || undefined;
+        self.heightElement    = options.heightElement || undefined;
+        self.triggerElement   = options.triggerElement || undefined;
+        self.containerElement = options.containerElement || undefined;
+        self.tileElement      = options.tileElement || undefined;
+        self.creatorMode      = options.creator || false;
+        self.scale            = options.scale || 15;
         self.debug            = options.debug || false;
-        this.canvas           = undefined;
-        this._drawing         = 0;
-        this.tiles            = [];
+        self.canvas           = undefined;
+        self._drawing         = 0;
+        self.tiles            = [];
         
         this.init = function() {
             Log.debug('Init')
             self._initTiles();
             self._initEvents();
+            self._initMap();
             self._initCanvas();
         };
         
         this._initTiles = function() {
             Log.debug('Init tiles')
-            floor       = new Tile();
-            floor.name  = "floor";
-            floor.id    = 1;
-            floor.color = '#000';
-            wall        = new Tile();
-            wall.name   = "Wall";
-            wall.id     = 2;
-            wall.color  = "#EEE";
-            self.tiles.push(floor);
-            self.tiles.push(wall);
+            floor          = new Tile();
+            floor.name     = "floor";
+            floor.id       = 1;
+            floor.color    = '#000';
+            floor.walkable = true;
+            wall           = new Tile();
+            wall.name      = "Wall";
+            wall.id        = 2;
+            wall.color     = "#EEE";
+            wall.walkable  = false;
+            self.addTile(floor);
+            self.addTile(wall);
         }
         
         this._initCanvas = function() {
             Log.debug('Init canvas')
-            if ( ! self.isMapEmpty() )
-                self.setMap(self.map);
             if ( ! self.widthElement && ! self.width )
                 throw new Error("Unable to handle width. (Please, inform widthElement or width)");
             if ( ! self.heightElement && ! self.height )
@@ -66,19 +62,8 @@ define(['library/jquery', 'library/canvas', 'library/log'],function($, Canvas, L
                 "scale": self.scale,
                 "debug": self.debug
             });
-            if ( self.isMapEmpty() ) {
-                self.clearMap();
-            } else {
-                self.drawMap();
-            }
-        };
-        
-        this.setWidth = function(w) {
-            self.width = parseInt(w, 10);
-        };
-        
-        this.setHeight = function(h) {
-            self.height = parseInt(h, 10);
+            if ( self.isMapEmpty() )
+                self.fillMap(1);
         };
         
         this._initEvents = function() {
@@ -90,6 +75,7 @@ define(['library/jquery', 'library/canvas', 'library/log'],function($, Canvas, L
                     elementId   = self.containerElement;
                     self.setWidth($('#'+self.widthElement).val());
                     self.setHeight($('#'+self.heightElement).val());
+                    self.map = [];
                     self._initCanvas();
                 });
             $('#'+self.containerElement).mousedown(function (e) {
@@ -107,6 +93,24 @@ define(['library/jquery', 'library/canvas', 'library/log'],function($, Canvas, L
             $('#'+self.containerElement).mouseup(function (e) {
                 self._drawing = 0;
             });
+        };
+        
+        this._initMap = function() {
+            if ( ! self.isMapEmpty() )
+                self.setMap(self._mapString);
+        };
+        
+        this.setWidth = function(w) {
+            self.width = parseInt(w, 10);
+        };
+        
+        this.setHeight = function(h) {
+            self.height = parseInt(h, 10);
+        };
+        
+        this.resize = function() {
+            $$.setWidth(self.width);
+            $$.setHeight(self.height);
         };
         
         this.savePoint = function(x, y, tileId) {
@@ -133,55 +137,74 @@ define(['library/jquery', 'library/canvas', 'library/log'],function($, Canvas, L
             return self.tiles;
         };
         
+        this.addTile = function(tile) {
+            self.tiles[tile.id] = tile;
+        };
+        
         this.getTile = function(id) {
-            for (t=0; t<self.tiles.length; t++) {
-                if ( id == self.tiles[t].id )
-                    return self.tiles[t];
-            }
-            return undefined;
+            if ( ! self.tiles[id] )
+                return undefined;
+            return self.tiles[id];
         };
         
         this.getCanvas = function() {
             return self.canvas;
         };
         
-        this.clearMap = function() {
-            Log.debug('Clear map')
+        this.fillMap = function(tileId) {
+            Log.debug('Fill map')
             for (ii=0; ii<self.width; ii++)
                 for (jj=0; jj<self.height; jj++)
-                    self.savePoint(ii, jj, 1);
+                    self.savePoint(ii, jj, tileId);
+            return self;
         };
         
         this.getMap = function() {
-            string = "";
-            for (i=0; i<self.height; i++) {
-                for (j=0; j<self.width; j++) {
-                    string += self.map[i][j] || 0 ;
-                }
-                string += "\n";
-            }
+            var string = "";
+            self.map.forEach(function(row) {
+                string += row.join('')+"\n";
+            });
             return string;
         };
         
         this.setMap = function(string) {
             Log.debug('Set map');
-            string = string || self.map;
-            z      = string.split("\n");
-            h      = z.length-1;
-            w      = z[0].length;
-            self.setWidth(w);
-            self.setHeight(h);
+            self._mapString = "";
+            self.map        = [];
+            string          = string || "";
+            string.split("\n").forEach(function(row) {
+                row = row.trim(); _row = [];
+                if ( row.trim().length <= 0 ) return; 
+                for (r=0; r<row.length; r++)
+                    _row.push(row.charAt(r)*1);
+                self.map.push(_row);
+            });
+            self.setWidth(self.map[0].length);
+            self.setHeight(self.map.length);
+            self._initCanvas();
+            return self;
         };
         
         this.drawMap = function() {
             $$.emptyContext();
-            for (_y=0; _y<self.height; _y++)
-                for(_x=0; _x<self.width; _x++)
-                    self.savePoint(_x,_y,z[_y][_x]);
+            self.map.forEach(function(row, rowIndex) {
+                row.forEach(function(column, columnIndex) {
+                    self.savePoint(columnIndex, rowIndex, column);
+                });
+            });
         };
         
         this.isMapEmpty = function() {
-            return (self.map.length <= 0);
+            return (self._mapString.length <= 0 && self.map.length <=0);
+        };
+        
+        this.canWalk = function(x,y) {
+            x      = parseInt(x, 10);
+            y      = parseInt(y, 10);
+            tile   = self.getTile(self.map[x][y]);
+            if ( tile && tile instanceof Tile )
+                return tile.walkable;
+            return false;
         };
         
         self.init();

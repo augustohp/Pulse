@@ -75,7 +75,7 @@
   <script type="text/javascript" src="../library/require.js"></script>
   <script type="text/javascript">
     var options  = { "paths": { "library": "../library" }};
-    var debug  = true;
+    var debug    = false;
     if ( debug ) {
       options.urlArgs = "bust="+(new Date()).getTime();
     }
@@ -86,7 +86,8 @@
         "triggerElement": "map_create",
         "containerElement": "map",
         "tileElement": "tile",
-        "creator": true
+        "creator": true,
+        "debug": debug
       });
       
       $('#map_get').click(function() {
@@ -94,7 +95,7 @@
       });
       
       $('#map_set').click(function() {
-        map.setMap($('#map_string').val());
+        map.setMap($('#map_string').val()).drawMap();
       });
     });
   </script>
