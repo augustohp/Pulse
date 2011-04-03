@@ -12,12 +12,10 @@ What the project current has:
 The roadmap:
 
 * Short term
-** Tile collision detection
 ** Casting rays to render a basic 3D view
 ** Remove jquery from project
 ** Performance refactor
 ** Better log tool
-** Framerate should control game status (play, pause)
 * Long term
 ** Canvas API focused on performance and as an object oriented way;
 ** Separate Mapping render from mapping creation tool;

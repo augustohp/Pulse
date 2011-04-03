@@ -13,7 +13,6 @@ define(['library/mapper', 'library/frame', 'library/jquery', 'library/keyboard',
         var self              = this;
         var $$                = undefined;
         options               = options || {};
-        var Log               = new Logger({"TAG":"[Engine]", "debug":options.debug});
         self._scale           = options.scale || 1;
         self._canvasElementId = options.canvasElementId || undefined;
         self._canvasElement   = undefined;
@@ -21,10 +20,11 @@ define(['library/mapper', 'library/frame', 'library/jquery', 'library/keyboard',
         self._framerate       = undefined;
         self._map             = options.map || undefined;
         self._keyboard        = undefined;
-        self._debug           = options.debug || false;
         self._startPoint      = options.startPoint || [0,0];
         self.player           = undefined;
         self._update          = false;
+        self.level            = options.level || 0;
+        var Log               = new Logger({"level":self.level});
         /**
          * Inits the game engine.
          */
@@ -45,14 +45,14 @@ define(['library/mapper', 'library/frame', 'library/jquery', 'library/keyboard',
             self._canvasElement = $('#'+self._canvasElementId).get(0);
             if (!self._canvasElement)
                 throw new Error("Invalid canvas element ...");
-            self._context  = $$ = new Map({"map":self._map, "containerElement":self._canvasElementId, "scale": self._scale, "debug":self._debug});
+            self._context  = $$ = new Map({"map":self._map, "containerElement":self._canvasElementId, "scale": self._scale, "level":self.level});
         };
         /**
          * Initilizes keyboard bindings.
          */
         self._initKeyboard = function() {
             Log.debug('Init keyboard events');
-            self._keyboard = new Keyboard({"debug": self.debug});
+            self._keyboard = new Keyboard({"level": self.level});
             self._keyboard.all(function() {self._update = true;});
         };
         /**
@@ -74,13 +74,14 @@ define(['library/mapper', 'library/frame', 'library/jquery', 'library/keyboard',
          */
         self._initPlayer = function() {
             Log.debug("Init player");
-            self.player = new Player({"x":self._startPoint[0], "y":self._startPoint[1]});
+            self.player = new Player({"x":self._startPoint[0], "y":self._startPoint[1],"level":self.level});
             self.key(['UP','w'], function() { self.player.acelerate(); },self._keyboard.KEYDOWN);
             self.key(['DOWN','s'], function() { self.player.reverse(); },self._keyboard.KEYDOWN);
             self.key(['LEFT','a'], function() { self.player.left(); }, self._keyboard.KEYDOWN);
             self.key(['RIGHT','d'], function() { self.player.right(); }, self._keyboard.KEYDOWN);
             self.key(['UP','w','DOWN','s'], function() { self.player.stop(); },self._keyboard.KEYUP);
             self.key(['LEFT','a','RIGHT','d'], function() { self.player.still(); }, self._keyboard.KEYUP);
+            self.key(['p','SPACE'], function() { self._framerate.playPause(); }, self._keyboard.KEYUP);
             self.player.draw($$.getCanvas());
         };
         /**

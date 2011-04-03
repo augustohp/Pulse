@@ -82,10 +82,12 @@ define(['library/jquery', 'library/log'], function($, Logger) {
         self.mapping[65] = 'a';
         self.mapping[83] = 's';
         self.mapping[68] = 'd';
+        self.mapping[80] = 'p';
         self.mapping[38] = 'UP';
         self.mapping[37] = 'LEFT';
         self.mapping[40] = 'DOWN';
         self.mapping[39] = 'RIGHT';
+        self.mapping[32] = 'SPACE';
         
         /**
          * Binds the events to the document object.
@@ -94,13 +96,13 @@ define(['library/jquery', 'library/log'], function($, Logger) {
             Log.debug("Binding events ...");
             $(document).keydown(function(e) {
                 key = e.which;
-                self.runAll();
+                self._runAll(e);
                 for(__b=0; __b<self._bindings.length; __b++)
                     self._bindings[__b].callFor(self.KEYDOWN,key);
             });
             $(document).keyup(function(e) {
                 key = e.which;
-                self.runAll();
+                self._runAll(e);
                 for(__b=0; __b<self._bindings.length; __b++)
                     self._bindings[__b].callFor(self.KEYUP,key);
             });
@@ -138,9 +140,9 @@ define(['library/jquery', 'library/log'], function($, Logger) {
             b = new Binding(key, callback, ev);
             self._bindings.push(b);
         };
-        self.runAll = function() {
+        self._runAll = function(e) {
             if ( self._all )
-                self._all.call();
+                self._all.call(self._all, e);
         }
         self.all = function(callback) {
             self._all = callback;

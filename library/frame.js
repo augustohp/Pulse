@@ -18,9 +18,9 @@ define(function() {
         options         = options || {};
         self.fps        = options.fps || 30;
         self._timeout   = 0;
-        self._frames    = 0;
         self._lastFrame = new Date();
         self._callbacks = [];
+        self._run       = 0;
 
         self.emptyCallbacks = function() {
             self._callbacks = [];
@@ -45,12 +45,27 @@ define(function() {
             self._lastFrame = new Date(self._lastFrame.getTime()+delta);
             if ( delta > self._timeout ) // Compensate rendering time loss ...
                 delta = Math.max(1, self._timeout - (delta-self._timeout));
-            //self._frames++;
             self.runCallbacks(delta);
-            setTimeout(self._update, 1000/self.fps);
+            if ( self._run == 1 )
+                setTimeout(self._update, 1000/self.fps);
+        };
+        
+        self.pause = function() {
+            self._run = 0;
+        };
+        
+        self.play = function() {
+            self.run();
+        };
+        
+        self.playPause = function() {
+            if ( self._run == 1 )
+                return self.pause();
+            return self.play();
         };
         
         self.run = function() {
+            self._run = 1;
             self._update();
         }
         

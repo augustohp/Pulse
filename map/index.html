@@ -75,7 +75,7 @@
   <script type="text/javascript" src="../library/require.js"></script>
   <script type="text/javascript">
     var options  = { "paths": { "library": "../library" }};
-    var debug    = false;
+    var debug    = 4;
     if ( debug ) {
       options.urlArgs = "bust="+(new Date()).getTime();
     }
@@ -87,7 +87,7 @@
         "containerElement": "map",
         "tileElement": "tile",
         "creator": true,
-        "debug": debug
+        "level": 4
       });
       
       $('#map_get').click(function() {

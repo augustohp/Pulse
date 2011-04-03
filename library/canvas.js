@@ -6,31 +6,23 @@
  * @package Pulse
  * @author Augusto Pascutti
  */
-define(["library/jquery"], function($) {
+define(["library/jquery", 'library/log'], function($, Logger) {
     var Canvas = function(options) {
         var self         = this;
         var $$           = undefined; // Context alias
         options          = options || {};
-        this.containerId = options.containerId || undefined;
-        this.container   = undefined;
-        this.context     = null;
-        this.scale       = parseInt(options.scale,10) || 1;
-        this.width       = parseInt(options.width, 10) || 50;
-        this.height      = parseInt(options.height, 10) || 50;
-        this.stroke      = this._stroke      = options.stroke || "#000000";
-        this.strokeWidth = this._strokeWidth = options.strokeWidth || 1;
-        this.fill        = this._fill        = options.fill   || "#000000";
-        this.debug       = options.debug || false;
-        /**
-         * Log utility. (paulirish.com/2009/log-a-lightweight-wrapper-for-consolelog/)
-         */
-        this.log = function() {
-            self.log.history = self.log.history || [];   // store logs to an array for reference
-            self.log.history.push(arguments);
-            arguments.callee = arguments.callee.caller;  
-            if(!self.debug) return;
-            if(window.console) window.console.log( Array.prototype.slice.call(arguments) );
-        }
+        self.containerId = options.containerId || undefined;
+        self.container   = undefined;
+        self.context     = null;
+        self.scale       = parseInt(options.scale,10) || 1;
+        self.width       = parseInt(options.width, 10) || 50;
+        self.height      = parseInt(options.height, 10) || 50;
+        self.stroke      = this._stroke      = options.stroke || "#000000";
+        self.strokeWidth = this._strokeWidth = options.strokeWidth || 1;
+        self.fill        = this._fill        = options.fill   || "#000000";
+        self.logLevel    = options.level || 0 ;
+        var Log          = new Logger({"level": self.logLevel});
+        
         /**
          * Returns the unit to draw a point in the canvas.
          *
@@ -48,14 +40,16 @@ define(["library/jquery"], function($) {
          * Defines the width;
          */
         this.setWidth = function(w) {
-            self.width = w;
-            w          = self.getUnit(w);
-            $(self.container).width(w+'px').attr('width', w);
+            self.width                 = w;
+            w                          = self.getUnit(w);
+            self.container.style.width = w+'px';
+            self.container.width       = w;
         };
         this.setHeight = function(h) {
-            self.height = h;
-            h           = self.getUnit(self.height);
-            $(self.container).height(h+'px').attr('height', h);
+            self.height                 = h;
+            h                           = self.getUnit(self.height);
+            self.container.style.height = h+'px';
+            self.container.height       = h;
         };
         /**
          * Returns the width in the correct scale.
@@ -71,7 +65,7 @@ define(["library/jquery"], function($) {
         this._init = function() {
             if ( ! self.containerId )
                 throw new Error("Container element not defined, please especify it in options.");
-            self.container = $('#'+self.containerId).get(0);
+            self.container = document.getElementById(self.containerId);
             self.setWidth(self.width);
             self.setHeight(self.height);
             
@@ -141,9 +135,11 @@ define(["library/jquery"], function($) {
         this.line = function(fromX, fromY, toX, toY, color) {
             if ( color )
                 self.setStroke(color);
-            self.log("Drawing line from "+self.getUnit(fromX)+","+self.getUnit(fromY)+" to "+self.getUnit(toX)+","+self.getUnit(toY));
-            $$.moveTo(self.getUnit(fromX), self.getUnit(fromY));
-            $$.lineTo(self.getUnit(toX), self.getUnit(toY));
+            fromX = self.getUnit(fromX); fromY = self.getUnit(fromY);
+            toX = self.getUnit(toX); toY = self.getUnit(toY);
+            Log.debug("Drawing line from "+fromX+","+fromY+" to "+toX+","+toY);
+            $$.moveTo(fromX, fromY);
+            $$.lineTo(toX, toY);
             if ( color )
                 self.reset();
             return self;
@@ -154,8 +150,10 @@ define(["library/jquery"], function($) {
         this.rect = function(fromX, fromY, width, height) {
             width  = width || 1;
             height = height || width;
-            self.log('Drawing rectangle from'+self.getUnit(fromX)+","+self.getUnit(fromY)+" with "+self.getUnit(width)+","+self.getUnit(height));
-            $$.strokeRect(self.getUnit(fromX), self.getUnit(fromY), self.getUnit(width), self.getUnit(height));
+            fromX = self.getUnit(fromX); fromY = self.getUnit(fromY);
+            width = self.getUnit(width); height = self.getUnit(height);
+            Log.debug('Drawing rectangle from '+fromX+","+fromY+" with "+width+","+height);
+            $$.strokeRect(fromX, fromY, width, height);
             return self;
         };
         /**
@@ -166,8 +164,10 @@ define(["library/jquery"], function($) {
                 self.setFill(fill);
             width  = width || 1;
             height = height || width;
-            self.log('Drawing a filled rectangle from'+self.getUnit(fromX)+","+self.getUnit(fromY)+" with "+self.getUnit(width)+","+self.getUnit(height));
-            $$.fillRect(self.getUnit(fromX), self.getUnit(fromY), self.getUnit(width), self.getUnit(height));
+            fromX = self.getUnit(fromX); fromY = self.getUnit(fromY);
+            width = self.getUnit(width); height = self.getUnit(height);
+            Log.debug('Drawing a filled rectangle from'+fromX+","+fromY+" with "+width+","+height);
+            $$.fillRect(fromX, fromY, width, height);
             if ( fill )
                 self.reset();
             return self;

@@ -2,8 +2,8 @@ define(['library/jquery', 'library/canvas', 'library/log', 'library/util', 'libr
     var Mapper = function(options) {
         var self              = this;
         var $$                = undefined;
-        var Log               = new Logger({"TAG":"[Mapper]", "debug":options.debug});
         options               = options || {};
+        self.logLevel         = options.level || 0;
         self.map              = [];
         self._mapString       = options.map || "";
         self.width            = parseInt(options.width, 10) || 0;
@@ -19,7 +19,8 @@ define(['library/jquery', 'library/canvas', 'library/log', 'library/util', 'libr
         self.canvas           = undefined;
         self._drawing         = 0;
         self.tiles            = [];
-        
+        var Log               = new Logger({"level":self.logLevel});
+
         this.init = function() {
             Log.debug('Init')
             self._initTiles();
@@ -45,7 +46,7 @@ define(['library/jquery', 'library/canvas', 'library/log', 'library/util', 'libr
         }
         
         this._initCanvas = function() {
-            Log.debug('Init canvas')
+            Log.debug('Init canvas');
             if ( ! self.widthElement && ! self.width )
                 throw new Error("Unable to handle width. (Please, inform widthElement or width)");
             if ( ! self.heightElement && ! self.height )
@@ -60,7 +61,7 @@ define(['library/jquery', 'library/canvas', 'library/log', 'library/util', 'libr
                 "width": self.width,
                 "height": self.height,
                 "scale": self.scale,
-                "debug": self.debug
+                "level": self.logLevel
             });
             if ( self.isMapEmpty() )
                 self.fillMap(1);
@@ -128,7 +129,8 @@ define(['library/jquery', 'library/canvas', 'library/log', 'library/util', 'libr
         this.drawBlock = function(x,y,fill) {
             $$.setStroke('#FFF');
             $$.setFill(fill);
-            $$.rect(x, y, 1); 
+            if ( self.creatorMode )
+                $$.rect(x, y, 1); 
             $$.rectFill(x, y, 1);
             $$.reset();
         };
@@ -198,7 +200,8 @@ define(['library/jquery', 'library/canvas', 'library/log', 'library/util', 'libr
             return (self._mapString.length <= 0 && self.map.length <=0);
         };
         
-        this.canWalk = function(x,y) {
+        this.canWalk = function(y,x) {
+            _x = x; _y = y;
             x      = parseInt(x, 10);
             y      = parseInt(y, 10);
             tile   = self.getTile(self.map[x][y]);

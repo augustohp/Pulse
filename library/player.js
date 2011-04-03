@@ -2,13 +2,14 @@ define(["library/log"], function(Logger) {
     var Player = function(options) {
         var self           = this;
         options            = options || {};
-        var Log            = new Logger({"TAG":"[Player]", "debug":options.debug});
+        options.level      = options.level || 0;
+        var Log            = new Logger({"TAG":"[Player]", "level":options.level});
         self.x             = options.x || 0; // current x position
         self.y             = options.y || 0; // current y position
         self.a             = 0;              // current angle looking
         self.moving        = 0;
-        self.speed         = options.speed || 0.3;
-        self.speedRotation = options.speedRotation || 5;
+        self.speed         = options.speed || 0.5;
+        self.speedRotation = options.speedRotation || 8;
         self.direction     = 0;
         self.map           = options.map || undefined;
         
@@ -67,7 +68,6 @@ define(["library/log"], function(Logger) {
         };
         
         self.canMoveTo = function(map, x,y) {
-            return true;
             return map.canWalk(x,y);
         }
         

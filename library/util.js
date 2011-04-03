@@ -1,3 +1,7 @@
+/**
+ * Garantees compatibility with older browsers, exposing some methods that are
+ * useful.
+ */
 define(function() {
     if (!Array.prototype.indexOf)
         Array.prototype.indexOf = function(searchElement /*, fromIndex */) {
