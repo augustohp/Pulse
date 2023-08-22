@@ -74,12 +74,12 @@
   <!-- scripts concatenated and minified via ant build script-->
   <script type="text/javascript" src="../library/require.js"></script>
   <script type="text/javascript">
-    var options  = { "paths": { "library": "../library" }};
+    var options  = { "baseUrl": "../library" };
     var debug    = 4;
     if ( debug ) {
       options.urlArgs = "bust="+(new Date()).getTime();
     }
-    require(options, ["library/mapper", "library/jquery"], function(Mapper, $) {
+    require(options, ["mapper", "jquery"], function(Mapper, $) {
       var map = new Mapper({
         "widthElement": "map_width",
         "heightElement": "map_height",

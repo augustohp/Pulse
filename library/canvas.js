@@ -6,7 +6,7 @@
  * @package Pulse
  * @author Augusto Pascutti
  */
-define(["library/jquery", 'library/log'], function($, Logger) {
+define(["jquery", 'log'], function($, Logger) {
     var Canvas = function(options) {
         var self         = this;
         var $$           = undefined; // Context alias

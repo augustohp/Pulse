@@ -5,7 +5,7 @@
  * @package Pulse
  * @author Augusto Pascutti <augusto@phpsp.org.br>
  */
-define(['library/jquery', 'library/log'], function($, Logger) {
+define(['jquery', 'log'], function($, Logger) {
     var KEYDOWN = 'down';
     var KEYUP   = 'up';
     

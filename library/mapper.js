@@ -1,4 +1,4 @@
-define(['library/jquery', 'library/canvas', 'library/log', 'library/util', 'library/map/tile'],function($, Canvas, Logger, undefined, Tile) {    
+define(['jquery', 'canvas', 'log', 'util', 'map/tile'],function($, Canvas, Logger, undefined, Tile) {    
     var Mapper = function(options) {
         var self              = this;
         var $$                = undefined;

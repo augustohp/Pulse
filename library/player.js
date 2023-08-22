@@ -1,4 +1,4 @@
-define(["library/log"], function(Logger) {
+define(["log"], function(Logger) {
     var Player = function(options) {
         var self           = this;
         options            = options || {};

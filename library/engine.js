@@ -6,7 +6,7 @@
  * @package Pulse
  * @author Augusto Pascutti <augusto@phpsp.org.br>
  */
-define(['library/mapper', 'library/frame', 'library/jquery', 'library/keyboard', 'library/player', 'library/log', 'library/util'], 
+define(['mapper', 'frame', 'jquery', 'keyboard', 'player', 'log', 'util'], 
         function(Map, Frame, $, Keyboard, Player, Logger, undefined) {
     
     var Game = function(options) {

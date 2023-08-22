@@ -63,13 +63,14 @@
   <!-- JavaScript at the bottom for fast page loading -->
   <script type="text/javascript" src="../library/require.js"></script>
   <script type="text/javascript">
-    var options  = {"paths":{ "library": "../library" }};
+    var options  = {"baseUrl": "../library" };
     var debug  = 2;
     if ( debug ) {
       options.urlArgs = "bust="+(new Date()).getTime();
     }
     
-    require(options, ["library/engine", 'library/jquery'], function(Engine, $) {
+    require(options, ["engine", 'jquery'], function(Engine, $) {
+      console.log($)
       var game = new Engine({
         "level": debug,
         "canvasElementId": "game",
