@@ -10,8 +10,8 @@
   <title>Pulse - Mapping Utility</title>
   <meta name="description" content="Pulse Mapping Utility">
   <meta name="author" content="Augusto Pascutti">
+  <link rel="stylesheet" href="skeleton.css">
   <link rel="stylesheet" href="style.css">
-
 </head>
 
 <body>
@@ -67,14 +67,14 @@
       </canvas>
     </div>
     <footer>
-      Augusto Pascutti - 2011 - augusto [at] phpsp [dot] org [dot] br
+      <a href="https://github.com/augustohp/Pulse">augustohp/Pulse</a>
     </footer>
   </div> <!--! end of #container -->
 
   <!-- scripts concatenated and minified via ant build script-->
-  <script type="text/javascript" src="../library/require.js"></script>
+  <script type="text/javascript" src="library/require.js"></script>
   <script type="text/javascript">
-    var options  = { "baseUrl": "../library" };
+    var options  = { "baseUrl": "library" };
     var debug    = 4;
     if ( debug ) {
       options.urlArgs = "bust="+(new Date()).getTime();

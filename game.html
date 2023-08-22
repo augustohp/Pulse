@@ -17,16 +17,16 @@
 
   <!-- Mobile viewport optimized: j.mp/bplateviewport -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <!-- CSS: implied media="all" -->
-  <link rel="stylesheet" href="style.css?v=2">
+  <link rel="stylesheet" href="skeleton.css">
+    <link rel="stylesheet" href="style.css">
 
 </head>
 
-<body>
+<body class="container">
 
-  <div id="container">
+  <div>
     <header>
-
+      <h1>Pulse (Canvas Raycasting)</h1>
     </header>
     <textarea id="map" style="display: none">
         22222222222222222222222222222222
@@ -55,15 +55,17 @@
         <canvas id="game"></canvas>
     </div>
     <footer>
-
+      <p>
+        <a href="https://github.com/augustohp/Pulse">augustohp/Pulse</a>
+      </p>
     </footer>
   </div> <!--! end of #container -->
 
 
   <!-- JavaScript at the bottom for fast page loading -->
-  <script type="text/javascript" src="../library/require.js"></script>
+  <script type="text/javascript" src="library/require.js"></script>
   <script type="text/javascript">
-    var options  = {"baseUrl": "../library" };
+    var options  = {"baseUrl": "library" };
     var debug  = 2;
     if ( debug ) {
       options.urlArgs = "bust="+(new Date()).getTime();
